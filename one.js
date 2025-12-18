@@ -785,17 +785,314 @@
 // console.log([1,2,3].includes(2))
 
 
+// Object destructuring
+// const user = { name: "John", age: 25 };
+// const { name, age } = user;
+// console.log(name, age);
+
+// Array destructuring
+// const arr = [10, 20];
+// const [a, b] = arr;
+
+// Spread/Rest(...)
+// const arr1 = [1, 2];
+// const arr2 = [...arr1, 3, 4];
+
+// const obj1 = { a: 1 };
+// const obj2 = { ...obj1, b: 2 };
+
+
+// function sum(...nums) {
+//   return nums.reduce((a, b) => a + b, 0);
+// }
+// sum(1, 2, 3); // 6
+
+
+
+// Default Parameters
+// Provide default values to function parameters.
+// function greet(name = "Guest") {
+//   return `Hello ${name}`;
+// }
+// greet(); // Hello Guest
+
+
+// Optional Chaining ?
+// const user = {};
+// console.log(user.address?.city);// undefined (no error)
+
+
+// Nullish Coalescing (??)
+// Use a default value only if null or undefined.
+// const value = null;
+// const result = value ?? "default";
+// console.log(result); // "default"
+
+
+// Template Literals
+// String interpolation and multi-line strings using backticks `.
+// const name = "Alice";
+// const age = 22;
+// const msg = `My name is ${name}
+// and I am ${age} years old.`;
+
+
+// Module Import/export
+// math.js
+// export const add = (a, b) => a + b;
+// export default function sub(a, b) {
+//   return a - b;
+// }
+// import sub, { add } from "./math.js";
+// add(2, 3);
+// sub(5, 2);
+
+
+
+// What is an Error in JavaScript?
+// An error is a runtime problem that stops normal execution of code.
+// Common error types:
+// SyntaxError – invalid JS syntax
+// ReferenceError – variable not defined
+// TypeError – wrong operation on a value
+// RangeError, URIError, etc.
+
+// try {
+//   let x = y + 1; // y is not defined
+// } catch (error) {
+//   console.log(error.message);
+// } finally {
+//   console.log("Always runs");
+// }
+
+
+// function divide(a, b) {
+//   if (b === 0) {
+//     throw new Error("Division by zero is not allowed");
+//   }
+//   return a / b;
+// }
+
+// try {
+//   divide(10, 0);
+// } catch (e) {
+//   console.log(e.message);
+// }
+
+
+
+// Built-in error object properties:
+// try {
+//   foo();
+// } catch (e) {
+//   console.log(e.name);    // ReferenceError
+//   console.log(e.message); // foo is not defined
+//   console.log(e.stack);   // call stack
+// }
+
+
+
+
+// Two kinds of equality in JS
+// === (Strict equality)
+// ✔ No type conversion
+// ✔ Compare type + value
+
+// 5 === "5"   // false
+// null === undefined // false
+//  Rule: If types differ → false (except NaN, which is never equal to itself)
+
+
+
+The Golden Coercion Rules (MEMORIZE THESE)
+When using ==, JavaScript applies these rules in order:
+
+
+Rule 1: Same type → compare directly
+1 == 1       // true
+"hi" == "hi" // true
+
+
+Rule 2: null and undefined
+null == undefined // true
+👉 They are only equal to each other
+null == 0    // false
+undefined == 0 // false
+
+
+Rule 3: Boolean → Number
+If one side is boolean:
+true  → 1
+false → 0
+false == 0 // true
+true == 1  // true
+
+
+
+Rule 4: String ↔ Number
+If comparing string and number → convert string to number
+"5" == 5   // true
+"5" - 1    // 4   ("5" → 5)
+
+
+Rule 5: Object ↔ Primitive
+Objects are converted to primitive using:
+valueOf()
+toString()
+Arrays → strings
+[] → ""
+[1,2] → "1,2"
+
+console.log([] == "");        // true
+console.log([1] == 1);       // true
+console.log([1,2] == "1,2"); // true
+
+[] == ""        // true
+[] == 0         // true
+"" == 0         // true
+js
+Copy code
+[] === false    // false (no coercion)
+{} == {}        // false (different references)
+NaN == NaN      // false
+
+
+Each {} creates a new memory location.
+
+const a = {};
+const b = {};
+a === b  // false
+But:
+const a = {};
+const b = a;
+a === b  // true
+
+NaN is not equal to anything, including itself.
+
+
+"5" - 1
+Operator logic
+- forces numeric conversion
+"5" → 5
+
+
+
+3️⃣ Truthy & Falsy (VERY IMPORTANT)
+Falsy values (ONLY these 6):
+false
+0
+-0
+0n
+""
+null
+undefined
+NaN
+👉 Everything else is truthy
+
+
+
+some eg : 
+0 || "hello"
+Answer: "hello"
+Why:
+|| returns first truthy value
+
+Boolean("")
+Answer: false
+Why:
+Empty string is falsy
+
+
+Boolean([])
+Answer: true
+Why:
+All objects are truthy
+
+
+!!"false"
+Answer: true
+Why:
+Non-empty string is truthy
+
+
+[] === []
+Answer: false
+Why:
+Different references in memory
+
+ 
+
+
+
+REMAINING CONCEPTS : 
+this in:
+global scope (browser vs node)
+normal function
+arrow function
+object methods
+class methods
+call, apply, bind
+
+
+Prototypes & Prototype Chain
+What is [[Prototype]]
+__proto__ vs prototype
+How JS does inheritance internally
+Why arrays have .map() but objects don’t
+
+
+
+Objects deep dive
+Property descriptors
+writable, enumerable, configurable
+Object.freeze, seal, preventExtensions
+Shallow copy vs deep copy
+Object.assign
+spread
+structuredClone
+in vs hasOwnProperty
 
 
 
 
 
 
+Promises (Deep)
+Promise states
+Promise chaining
+Error handling
+Promise.all, race, any, allSettled
+Promise vs callback
 
 
 
+async / await
+async always returns a promise
+error handling with try/catch
+parallel vs sequential await
 
 
 
+OOP IN JS (optinal)
 
+ 
 
+DOM & BROWSER JS (Frontend / Full-stack)
+DOM, but need:
+Even bubbling & capturing
+event.target vs event.currentTarget
+preventDefault vs stopPropagation
+How browser renders JS + layout + paint (high level)
+
+  
+
+array methods 
+internally:
+map
+filter
+reduce
+forEach
+find, some, every
+Interviewers ask:
+“Implement map using reduce”
+Write a polyfill for reduce”
