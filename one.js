@@ -12,6 +12,28 @@
 
 
 // JS is sync single threaded langugage 
+// JS is Just in time compiled language, 
+//        JavaScript
+//             ↓
+//          Parsing(write syntax,func etc)
+//             ↓
+//          Bytecode (not the cpu level ie low level machine code)
+//             ↓
+//       ┌─────────────┐
+//       │ Interpreter │ (understands and executes the bytecode)
+//       └──────┬──────┘
+//              ↓
+//           Execute (cpu level machine code)
+//              ↓
+//     Is code "hot"? 
+//         ↙         ↘
+//       No           Yes
+//       ↓             ↓
+//    Continue     JIT Compiler ( sees hot code , compiles it to machine code for faster execution ) : eg(10,20) variables are initialized at runtime , jit compiler sees and does inlinting or machine level code if it was string then it wouldnt work(means it will find other way in memory repereantation to make it fasters customized ) as it is not cpu native operation 
+//                     ↓
+//              Machine Code
+//                     ↓
+//                   CPU
 
 
 // eg code : 
@@ -116,7 +138,7 @@
 // true
 
 
-// variables,functions are attached to windwo object inside it 
+// var,functions are attached to windwo object inside it  , not let 
 //like 
 // var a =10
 // function b(){var s=10,consol.elog(s)}
@@ -163,7 +185,7 @@
 // lexical environment of a is created and b is attached to it
 // then lexical environment of c is created and b is attached to it
 // so in c() , b can be accessed as it is lexically scoped
-
+//also func c cannot finds b in its own lexical environment so it looks for b in its parent lexical environment ie a()
 // if we try to access b outside the function c() , error will be thrown
 // because b is not defined outside a()
 
@@ -184,8 +206,12 @@
 // means not stroed in global memoey object 
 // so this can only be executed after initialization 
 
+// result : ReferenceError: Cannot access 'x' before initialization
 // so the time difference between when the let a = 10 was hoisted and till when it 
 // was assigned some value <= this peiroed is called temporzal dead zone 
+
+//TDZ is the period from entering the scope until execution reaches the let/const declaration and initializes it.
+//func,var(initialed to undeifned),let(but not initialized),const are all hoisted 
 
 //eg  :
 // console.log(x)
@@ -221,9 +247,9 @@
 //best eg : 
 // if(true ) true 
 // but whwat if we want to do muktiple things =>create block
+//A block can create a scope, but not every scope is necessarily a block
 
-
-// reason why let , const are block scoped and VAR is not 
+// reason why let , const are block scoped and VAR is function scoped  (or global-scoped when declared at top level).
 // {
 //     var a =10 ; 
 //     let b =10 ; const c= 100
@@ -233,18 +259,19 @@
 
 
 //shadowing in JS 
+//var doesnt have shadowing as it is function scoped becayse var is func scoped , it doesnt follow block rules ,and also var can be reassigned/redeclaerd
 // var a = 130
 // { 
 //     var a =10 ; 
-// console.log(a)
-//     let b =10 ; const c= 100
+//      console.log(a)
 // }
 // console.log(a)
 
 // here in above eg : out var =130 is shadowing inner var inside block but still the output 
 // is 10 10 
-// why is that : because it is reference to same memory 
+// why is that : because it is reference to same memory (so not exactly shadowing but refering to same )
 // so var gets modified inside the global object 
+// as var is limited to func scope 
 
 // this is not in case of let 
 // let b = 130
@@ -260,13 +287,15 @@
 // same if that block was a function 
 
 
-// illegal shadowing : 
+// illegal shadowing : as var doesnt follow block scopring and attched to func scoped
 // let a= 20
 // {
 //     var a = 10
 //     console.log(a)
 // } 
 // error : syntax error cannot redeclare a 
+
+
 
 // but  but you can shdow let - let 
 // eg : this works 
@@ -301,6 +330,7 @@
 
 // closures in JS 
 
+//in each nested func , first memory assigment is doen then code execution is done
 // closure : a combination of function bundeld with with its lexical environment 
 // eg  
 // function a (){
@@ -313,6 +343,7 @@
 // a()
 
 //functions always remembers thier scope 
+//A function object retains a reference to the lexical environment in which it was created.
 // eg :perfect closure  
 // function x(){
 //     let  a =1
@@ -389,6 +420,7 @@
 // js executes loop var i instanty and puts ssettimout into hold 
 // prints first 
 
+//each callback func refereces to same i , 
 //by the time the first timeout reaches its end var i already reached 6
 // and prints its value 
 //as we know functino maintian the lexical scoping wiht reference to variabls 
@@ -397,6 +429,7 @@
 
 // fix will be :  changing var to let 
 // so new copy of i is created newly everytime when setTimeout calls i 
+//each callback func references to its own distinct i due to using LET
 // function x() {
 //     for (let i = 1; i <= 5; i++) {
 //         setTimeout(function () {
@@ -430,6 +463,12 @@
 
 
 // JavaScript is always “pass-by-value” — but for objects, the value is a reference
+// let a = 10;
+// function change(x) {
+//     x = 20;
+// }
+// change(a);
+// console.log(a); // 10
 
 
 
@@ -442,11 +481,12 @@
 //}//this can be hoisted 
 
 
-// function expression 
+// function expression  whn func obj assinged to variable
 // b()
 // var b=function(){
 //     console.log("b called")
 // }
+//TypeError: b is not a function as undefined() is called 
 
 // this function is assinged to a varaiable so cannot be hoisted if done then trhows type error 
 //TypeError happens when a variable exists but is the wrong type for the operation.
@@ -454,6 +494,7 @@
 // but its value is undefined
 // and undefined() is not callable
 
+// if  plain b() is calleed only , then refernce error ; didnt find anyehre exists
 
 //anonymouse function 
 //wrong syntax 
@@ -470,6 +511,38 @@
 // Outside the function → xyz does not exist at all
 // So JavaScript says:
 // “I can’t find this identifier anywhere.”
+
+
+
+//sumary of all errors till now : 
+
+
+// console.log(a); // 10
+// let a = 10;
+//refernce error : cannot access a before initializaiton
+
+
+// console.log(zzzzz) //reference error : not defined
+
+
+
+// let a =10
+// let a =20 //syntax error cannot redeclare
+
+
+
+
+// b()
+// var b=function(){
+//     console.log("b called")
+// }
+//TypeError: b is not a function as undefined() is called 
+
+
+
+
+
+
 
 
 //what are first class functions 
@@ -578,6 +651,29 @@
 // Things like setTimeout, fetch, or document.getElementById are provided by the browser through Web APIs.
 // Think of Web APIs as browser “helpers” that JS can call into.
 
+//JavaScript itself executes code synchronously on its JS execution thread,
+//  while the host environment can perform or coordinate asynchronous operations
+//  outside that immediate execution flow and later schedule JavaScript callbacks/tasks to run
+
+// ┌──────────────────────────────────────────┐
+// │                 BROWSER                  │
+// │                                          │
+// │   ┌──────────────┐                       │
+// │   │ JavaScript   │                       │
+// │   │ Engine       │                       │
+// │   │              │                       │
+// │   │ Call Stack   │                       │
+// │   └──────────────┘                       │
+// │          │                               │
+// │          │                               │
+// │   ┌──────┴──────────────────────────┐    │
+// │   │          Browser APIs           │    │
+// │   │                                │    │
+// │   │ timers / DOM / network / etc.  │    │
+// │   └─────────────────────────────────┘    │
+// │                                          │
+// │          Event Loop / Queues             │
+// └──────────────────────────────────────────┘
 
 
 
@@ -589,7 +685,7 @@
 //prints start , end , callback 
 // when the timer expires, the function is put into callback queue 
 // and event loop checks if smthng is present and remove the fnc from 
-// bacllback queue to the call stack and executre and pop out 
+// bacllback queue to the call stack and executre and pop out  ( callback is oly pushed in call stack is empty )
 
 
 //there is also a micotask queue which has higher priority 
@@ -599,6 +695,18 @@
 
 //and all other call back fnc goest to callback queue (task queeu)
 
+//order : 
+// Synchronous code
+//       ↓
+// Microtasks
+//       ↓
+// Next task
+
+//After the currently running JavaScript finishes, the microtask queue is drained before the event loop proceeds to another task.
+// run microtask
+// run microtask
+// ...
+// until microtask queue is empty
 
 
 // the task waiting th callback queue can never get a chanve to execute : 
@@ -624,6 +732,17 @@
 // This can freeze UI updates or delay timers.
 // This is why careful design is important.
 
+// eg : function loop() {
+//     queueMicrotask(loop);
+// }
+
+// loop();
+
+// setTimeout(() => {
+//     console.log("Timeout");
+// }, 0);
+// The microtask queue never becomes empty.therefore the next task may never get its turn.
+
 
 // console.log("Start");
 // fetch("https://jsonplaceholder.typicode.com/todos/1")
@@ -647,6 +766,13 @@
 // fetch() makes an HTTP request, which takes some time (tens or hundreds of milliseconds).
 // When the network response arrives, the .then() callbacks are queued as microtasks.
 
+//If the timeout task becomes ready before the fetch's promise reaction
+// → timeout task may run first.
+// If the fetch promise reaction becomes ready first
+// → its microtask can run before the timeout task.
+
+
+
 // eg: for clearing confusion :
 // console.log("Start");
 // Promise.resolve().then(() => {
@@ -654,12 +780,27 @@
 // });
 // setTimeout(() => {
 //   console.log("Timeout callback");
-// }, 0);
+// }, 0); // this doesnt mean immediately executes after 0ms , it is put in callback queue and event loop checks if call stack is empty then only it executes
 // console.log("End");
 
 
-//closures & garbage collcetor are related as the vars that form closure 
-// dont get released up 
+// THen Why use setTimeout(fn, 0)?
+// Suppose:
+// console.log("Important 1");
+// setTimeout(() => {
+//     console.log("Less important");
+// }, 0);
+// console.log("Important 2");
+// Output:
+// Important 1
+// Important 2
+// Less important
+// This can be useful for deferring work to a later task.
+
+
+
+//closures & garbage collcetor are related as the vars that form closure  as 
+//A variable remains alive as long as it is reachable through something that is still reachable.
 
 
 // browser : 
@@ -736,7 +877,74 @@
 
 
 
+// Modern engines commonly use a combination of:
+// JavaScript
+//     ↓
+// Parsing
+//     ↓
+// Intermediate representation / bytecode
+//     ↓
+// Execution
+//     ↓
+// JIT optimization for hot code
+//     ↓
+// optimized machine code
+// Modern JavaScript engines use parsing, interpretation/bytecode execution, and JIT compilation and optimization techniques
+// JIT = Just-In-Time compilation.
+// The idea is:
+//     Compile/optimize code while the program is running.
 
+
+//Call Stack
+// Used to keep track of currently executing function calls.
+// Heap
+// A region of memory used for dynamically allocated data such as objects and functions
+
+// Objects are dynamically allocated and managed by the JavaScript engine, and the heap is a useful mental model for that storage
+// Because objects can have dynamic size and lifetime
+
+// What is garbage collection?
+// Garbage collection is the automatic process of reclaiming memory that the program can no longer reach/use.
+
+
+// Mark-and-sweep strategy : reclamining memory in garbage collection strategy 
+
+// One classic garbage-collection concept is mark-and-sweep.
+
+// Imagine:
+
+// Global
+//   │
+//   ├────→ Object A
+//   │
+//   └────→ Object B
+
+// Object A ───→ Object C
+
+// Object D   ← nobody references it
+
+// The GC starts from roots such as reachable global/runtime references.
+
+// It marks:
+
+// Global
+//  ↓
+// A
+//  ↓
+// C
+// B
+// Those are reachable.
+// D isn't reachable.
+// So conceptually:
+// A → keep
+// B → keep
+// C → keep
+// D → garbage
+// The engine can reclaim memory associated with unreachable data.
+// Modern engines use sophisticated generational and incremental GC strategies; "mark-and-sweep" is a useful foundational model rather than the whole modern GC implementation.
+
+
+start making notes from here into readme 
 
 // Higher-Order Functions  : 
 
@@ -766,7 +974,112 @@
 //   console.log(calculate(circumference,radius[i]))
 // }
 
- 
+//async functions always return a Promise, and await works with a Promise-like value.
+
+
+
+//eg -1 
+// async function test() {
+//   console.log("A");
+//   console.log("B");
+// }
+// console.log("Start")
+// test();
+// console.log("End");
+//0utput : start a b end -> even if the func is async m there is no await so it executes normally
+
+
+//eg-2
+// async function test() {
+//   console.log("A");
+//   await Promise.resolve();
+//   console.log("B");
+// }
+// test();
+// console.log("C");
+//output : a c b  -> await tells pause the execution of this functino(till the time it is resolved) and execute the next line of code in the main thread
+
+
+start learning  from here : 
+
+functions are objects  IN JS and callable :
+
+EG: 
+// function counter() {}
+// counter.count = 0;
+// console.log(counter.count); // 0
+// counter.count++;
+// counter.count++;
+// console.log(counter.count); // 2
+
+// EG ; 
+// function greet() {
+//     console.log("Hello");
+// }
+// greet.language = "English";
+// greet.version = 1;
+// console.log(greet.language); // English
+// console.log(greet.version); 
+
+// const greet = function () {
+//     console.log("Hello");
+// }; 
+// const a = greet 
+// greet,a  conceptually references to the same  function object
+
+
+// EG :
+// const calculator = {
+//     add: function (a, b) {
+//         return a + b;
+//     }
+// };
+// calculator.add(2,  3); //method is nothing but a function that is a property of an object
+
+
+// EG: 
+// const operations = [
+//     function (x) {
+//         return x + 1;
+//     },
+//     function (x) {
+//         return x * 2;
+//     },
+//     function (x) {
+//         return x ** 2;
+//     }
+// ];
+// console.log(operations[0](5)); // 6
+// console.log(operations[1](5)); // 10
+// console.log(operations[2](5)); // 25
+
+EG : 
+// map, filter, and reduce suddenly make sense : takes in func as a paramter and transforms the array into another array
+// const numbers = [1, 2, 3, 4];
+// const result = numbers.map(function (number) {
+//     return number * 2;
+// })
+// console.log(result);
+
+// conceptually : 
+// function myMap(array, fn) {
+//     const result = [];
+
+//     for (const item of array) {
+//         result.push(fn(item));
+//     }
+
+//     return result;
+// }
+
+
+
+
+
+
+
+
+
 
 
 // Polyfills 
@@ -904,195 +1217,195 @@
 
 
 
-The Golden Coercion Rules (MEMORIZE THESE)
-When using ==, JavaScript applies these rules in order:
+// The Golden Coercion Rules (MEMORIZE THESE)
+// When using ==, JavaScript applies these rules in order:
 
 
-Rule 1: Same type → compare directly
-1 == 1       // true
-"hi" == "hi" // true
+// Rule 1: Same type → compare directly
+// 1 == 1       // true
+// "hi" == "hi" // true
 
 
-Rule 2: null and undefined
-null == undefined // true
-👉 They are only equal to each other
-null == 0    // false
-undefined == 0 // false
+// Rule 2: null and undefined
+// null == undefined // true
+// 👉 They are only equal to each other
+// null == 0    // false
+// undefined == 0 // false
 
 
-Rule 3: Boolean → Number
-If one side is boolean:
-true  → 1
-false → 0
-false == 0 // true
-true == 1  // true
-
-
-
-Rule 4: String ↔ Number
-If comparing string and number → convert string to number
-"5" == 5   // true
-"5" - 1    // 4   ("5" → 5)
-
-
-Rule 5: Object ↔ Primitive
-Objects are converted to primitive using:
-valueOf()
-toString()
-Arrays → strings
-[] → ""
-[1,2] → "1,2"
-
-console.log([] == "");        // true
-console.log([1] == 1);       // true
-console.log([1,2] == "1,2"); // true
-
-[] == ""        // true
-[] == 0         // true
-"" == 0         // true
-js
-Copy code
-[] === false    // false (no coercion)
-{} == {}        // false (different references)
-NaN == NaN      // false
-
-
-Each {} creates a new memory location.
-
-const a = {};
-const b = {};
-a === b  // false
-But:
-const a = {};
-const b = a;
-a === b  // true
-
-NaN is not equal to anything, including itself.
-
-
-"5" - 1
-Operator logic
-- forces numeric conversion
-"5" → 5
+// Rule 3: Boolean → Number
+// If one side is boolean:
+// true  → 1
+// false → 0
+// false == 0 // true
+// true == 1  // true
 
 
 
-3️⃣ Truthy & Falsy (VERY IMPORTANT)
-Falsy values (ONLY these 6):
-false
-0
--0
-0n
-""
-null
-undefined
-NaN
-👉 Everything else is truthy
+// Rule 4: String ↔ Number
+// If comparing string and number → convert string to number
+// "5" == 5   // true
+// "5" - 1    // 4   ("5" → 5)
+
+
+// Rule 5: Object ↔ Primitive
+// Objects are converted to primitive using:
+// valueOf()
+// toString()
+// Arrays → strings
+// [] → ""
+// [1,2] → "1,2"
+
+// console.log([] == "");        // true
+// console.log([1] == 1);       // true
+// console.log([1,2] == "1,2"); // true
+
+// [] == ""        // true
+// [] == 0         // true
+// "" == 0         // true
+// js
+// Copy code
+// [] === false    // false (no coercion)
+// {} == {}        // false (different references)
+// NaN == NaN      // false
+
+
+// Each {} creates a new memory location.
+
+// const a = {};
+// const b = {};
+// a === b  // false
+// But:
+// const a = {};
+// const b = a;
+// a === b  // true
+
+// NaN is not equal to anything, including itself.
+
+
+// "5" - 1
+// Operator logic
+// - forces numeric conversion
+// "5" → 5
 
 
 
-some eg : 
-0 || "hello"
-Answer: "hello"
-Why:
-|| returns first truthy value
-
-Boolean("")
-Answer: false
-Why:
-Empty string is falsy
-
-
-Boolean([])
-Answer: true
-Why:
-All objects are truthy
-
-
-!!"false"
-Answer: true
-Why:
-Non-empty string is truthy
-
-
-[] === []
-Answer: false
-Why:
-Different references in memory
-
- 
+// 3️⃣ Truthy & Falsy (VERY IMPORTANT)
+// Falsy values (ONLY these 6):
+// false
+// 0
+// -0
+// 0n
+// ""
+// null
+// undefined
+// NaN
+// 👉 Everything else is truthy
 
 
 
-REMAINING CONCEPTS : 
-this in:
-global scope (browser vs node)
-normal function
-arrow function
-object methods
-class methods
-call, apply, bind
+// some eg : 
+// 0 || "hello"
+// Answer: "hello"
+// Why:
+// || returns first truthy value
+
+// Boolean("")
+// Answer: false
+// Why:
+// Empty string is falsy
 
 
-Prototypes & Prototype Chain
-What is [[Prototype]]
-__proto__ vs prototype
-How JS does inheritance internally
-Why arrays have .map() but objects don’t
+// Boolean([])
+// Answer: true
+// Why:
+// All objects are truthy
 
 
-
-Objects deep dive
-Property descriptors
-writable, enumerable, configurable
-Object.freeze, seal, preventExtensions
-Shallow copy vs deep copy
-Object.assign
-spread
-structuredClone
-in vs hasOwnProperty
+// !!"false"
+// Answer: true
+// Why:
+// Non-empty string is truthy
 
 
-
-
-
-
-Promises (Deep)
-Promise states
-Promise chaining
-Error handling
-Promise.all, race, any, allSettled
-Promise vs callback
-
-
-
-async / await
-async always returns a promise
-error handling with try/catch
-parallel vs sequential await
-
-
-
-OOP IN JS (optinal)
+// [] === []
+// Answer: false
+// Why:
+// Different references in memory
 
  
 
-DOM & BROWSER JS (Frontend / Full-stack)
-DOM, but need:
-Even bubbling & capturing
-event.target vs event.currentTarget
-preventDefault vs stopPropagation
-How browser renders JS + layout + paint (high level)
+
+
+// REMAINING CONCEPTS : 
+// this in:
+// global scope (browser vs node)
+// normal function
+// arrow function
+// object methods
+// class methods
+// call, apply, bind
+
+
+// Prototypes & Prototype Chain
+// What is [[Prototype]]
+// __proto__ vs prototype
+// How JS does inheritance internally
+// Why arrays have .map() but objects don’t
+
+
+
+// Objects deep dive
+// Property descriptors
+// writable, enumerable, configurable
+// Object.freeze, seal, preventExtensions
+// Shallow copy vs deep copy
+// Object.assign
+// spread
+// structuredClone
+// in vs hasOwnProperty
+
+
+
+
+
+
+// Promises (Deep)
+// Promise states
+// Promise chaining
+// Error handling
+// Promise.all, race, any, allSettled
+// Promise vs callback
+
+
+
+// async / await
+// async always returns a promise
+// error handling with try/catch
+// parallel vs sequential await
+
+
+
+// OOP IN JS (optinal)
+
+ 
+
+// DOM & BROWSER JS (Frontend / Full-stack)
+// DOM, but need:
+// Even bubbling & capturing
+// event.target vs event.currentTarget
+// preventDefault vs stopPropagation
+// How browser renders JS + layout + paint (high level)
 
   
 
-array methods 
-internally:
-map
-filter
-reduce
-forEach
-find, some, every
-Interviewers ask:
-“Implement map using reduce”
-Write a polyfill for reduce”
+// array methods 
+// internally:
+// map
+// filter
+// reduce
+// forEach
+// find, some, every
+// Interviewers ask:
+// “Implement map using reduce”
+// Write a polyfill for reduce”
