@@ -944,7 +944,6 @@
 // Modern engines use sophisticated generational and incremental GC strategies; "mark-and-sweep" is a useful foundational model rather than the whole modern GC implementation.
 
 
-start making notes from here into readme 
 
 // Higher-Order Functions  : 
 
@@ -1000,11 +999,23 @@ start making notes from here into readme
 //output : a c b  -> await tells pause the execution of this functino(till the time it is resolved) and execute the next line of code in the main thread
 
 
-start learning  from here : 
 
-functions are objects  IN JS and callable :
 
-EG: 
+
+
+
+// functions are objects  IN JS and callable :
+
+//another concept : a===b is true as both references to same obj( as func is obj)
+// function hello() {
+//     console.log("Hello");
+// }
+// const a = hello;
+// const b = hello;
+// console.log(a === b);
+
+
+// EG: 
 // function counter() {}
 // counter.count = 0;
 // console.log(counter.count); // 0
@@ -1053,7 +1064,7 @@ EG:
 // console.log(operations[1](5)); // 10
 // console.log(operations[2](5)); // 25
 
-EG : 
+// EG : 
 // map, filter, and reduce suddenly make sense : takes in func as a paramter and transforms the array into another array
 // const numbers = [1, 2, 3, 4];
 // const result = numbers.map(function (number) {
@@ -1073,12 +1084,667 @@ EG :
 // }
 
 
+// Regular functions have a property called:
+// function Person(name) {
+//     this.name = name;
+// }
+// console.log(Person.prototype);
+// Person.prototype.sayHello = function () {
+//     console.log("Hello, " + this.name);
+// };
+// but for arrow functions 
+// const add = () => {};
+// console.log(add.prototype); // undefined 
+// This is a great example of why "functions are objects" does not mean all function types behave identically
+
+// so in short arrow functions : 
+// don't have their own this
+// don't have their own arguments
+// cannot be used as constructors with new
+// don't have the normal function .prototype property
+// const add = (a, b) => a + b;
+// add.description = "Adds two numbers";
+// console.log(add.description);
+
+
+// function Person(name){
+//     this.name = name;
+// }
+// Person.prototype.sayHello = function(){ //Person.prototype is the shared object from which 
+//     //objects created using new Person() can get properties and methods they don't have themselves.
+//     console.log("Hello, " + this.name);
+// }
+// const john = new Person("John");//creates a new obj & sets its prototy. to Person.prototype
+// console.log(Person.prototype)
+// console.log(john.__proto__); // Person.prototype other way same meanning 
+// console.log(john.sayHello())
+// console.log(john.__proto__ === Person.prototype); // true
+// console.log(Object.getPrototypeOf(john) === Person.prototype) //modenr way to get prototype of an object
+
+
+// why need of new keyword :
+// 1. Creates a new empty object.
+// 2. Sets the prototype of that object to the constructor’s prototype.
+// 3. Binds this inside the constructor to the new object.
+// 4. Returns the new object (unless the constructor explicitly returns another object).
+
+// const john = new Person("John");
+// as approximately:
+// const john = {};
+// Object.setPrototypeOf(john, Person.prototype);
+// Person.call(john, "John");
+// return john;
+
+// const alice = Person("Alice");
+// console.log(alice); // undefined
+// console.log(alice.sayHello()); //type error : cannot read property sayHello of undefined
+
+
+//call
+// call() lets you explicitly choose this.
+// greet.call(person);
+// means: Run greet with this set to person.
 
 
 
 
 
 
+
+
+
+// EG;
+//this also works 
+// function Person(name) {
+//     console.log(name);
+// }
+// Person.prototype.sayHello = function() {
+//     console.log("Hello");
+// }
+// const alice = new Person("Alice");
+// alice.sayHello()
+
+
+//So what is new actually for?
+// Forget this for a moment.
+// Imagine:
+// function Person(name) {
+// }
+// If you do:
+// Person("Alice");
+// you're saying:
+//     "Run this function."
+// If you do:
+// new Person("Alice");
+// you're saying:
+//     "Create a new object based on Person, then run this function to initialize that object."
+// That's the key difference.
+
+
+
+// Once functions are objects, they can have methods such as:
+// call()
+// apply()
+// bind()
+//synatx : 
+// greet.call(thisValue, arg1, arg2, ...)
+//greet.apply(thisValue, [arg1, arg2, ...])
+
+function greet(message, punctuation) {
+    console.log(message + " " + this.name + punctuation);
+}
+const person = {name: "Alice"};
+greet.call(person,"hello","!"); //basically Call this function with this refer/set to person, and takes in a list of arguments
+greet.apply(person, ["Hello", "!"]);//same as call but takes an array of arguments instead of a list of arguments
+
+
+const boundGreet = greet.bind(person);
+boundGreet("gello","!!!!"); //creates new func BoundGreet with this permanently set to person, regardless of how it's called later.
+//so boundgreet != greet , it is a new function with this permanently set to person
+//we basically say Give me a new function that, whenever I run it later, uses person as this 
+
+
+
+//all about promises 
+// Promise is an object representing the eventual result of an asynchronous operation.
+//initially pending , then either resolved(fulfilled state) or rejected(rejected state)
+
+// EG : 
+// fetch("/users")
+//     .then(response => {
+//         return response.json();
+//     })
+//     .catch(error => {
+//         console.log(error);
+//     })
+//     .finally(() => {
+//         hideLoadingSpinner();
+//     });
+
+
+// more about promiesse :
+
+// EG : 
+// const p1 = fetch("/users");
+// const p2 = fetch("/posts");
+// const p3 = fetch("/comments");
+// You want to coordinate these three operations.
+
+Promise.all() // when all promises are expected to succeed then use 
+Promise.all([p1, p2, p3]) //if all succesd ,then resulst are into array else rejected 
+
+
+Promise.allSettled() // i dont care whetherr they succeed or fail , i just want to know the result of all promises (reutrns results in array )
+
+
+Promise.any() //give me any promise that succeeds (returns the first fulfilled promise, or rejects if all fail)
+
+Promise.race() //give me the first promise that settles (fulfilled or rejected) (returns the first settled promise, regardless of outcome)
+
+
+
+// all about "THIS" keyword  : 
+// biggest misconception : this refers to the object where the function was written
+//  it is how waas this function called ? 
+
+// EG:
+// For example:
+// function a() {
+//     console.log(this);
+// }
+// a();
+// The value of this depends on the environment/mode in which the code runs.
+// Now compare:
+// const obj = {
+//     a: function () {
+//         console.log(this);
+//     }
+// };
+// obj.a();
+// Here, a() was called as a method of obj, so:
+// this === obj
+// That distinction is the foundation of this.
+
+
+// method vs detached functino call
+const obj = {
+    name: "Alice",
+    greet() {
+        console.log(this.name);
+    }
+};
+obj.greet(); // before . is the method receiver so this==obj
+const detachedGreet = obj.greet;
+detachedGreet(); // this is undefined in strict mode (as this loses context), or window/global in non-strict mode
+
+
+// Non-stict mode
+// In non-strict mode, a standalone regular function call can result in:
+// this === globalThis
+// In a browser, that is typically:
+// this === window
+// Strict mode
+// "use strict";
+// function a() {
+//     console.log(this);
+// }
+// a();
+// Now:
+// this === undefined
+// This is extremely important.
+// So:
+// function a() {
+//     console.log(this);
+// }
+// a();
+// is not enough information to determine this without knowing the execution context/mode.
+
+
+
+// this with new
+// Now:
+// function Person(name) {
+//     this.name = name;
+// }
+// const person = new Person("Alice");
+// console.log(person.name);
+// Output:
+// Alice
+// When you use:
+// new Person("Alice")
+// JavaScript creates a new object and, conceptually, makes:
+// this
+// refer to that new object while the constructor runs.
+
+
+
+
+// const obj = {
+//     name: "Alice",
+//     greet() {
+//         console.log(this.name);
+//     }
+// };
+// obj.greet(); // this === obj bcz (who called greet here ? obj so this is obj)
+
+
+
+// in a nut shell, this determines when where it is called 
+// also for normal calling function this keyword has no lexical scoping 
+//normal func : like 
+// function outer() {
+//     const x = 10;
+
+//     function normal() {
+//         console.log(x); // lexical → 10
+//         console.log(this); // NOT lexical
+//     }
+// }
+
+
+but this works as calle called obj. with greet() func
+// const obj = {
+//     name: "Alice",
+
+//     greet() {
+//         function inner() {
+//             console.log(this.name);
+//         }
+
+//         inner(); 
+//     }
+// };
+
+// obj.greet(); //prints alice
+
+
+
+
+
+
+
+for functions : 
+lexical scopeing : variables 
+this -> determine when called(runtime) 
+
+const arrow = () => {
+    console.log(x);    // lexical
+    console.log(this); // lexical
+};
+
+
+eg : 2 
+const obj = {
+    name: "Alice",
+
+    arrow: () => {
+        console.log(this.name);
+    }
+};
+obj.arrow();
+//this ==obj as when this was called its lexical scope was obj
+
+
+
+
+//imp eg : 
+const obj = {
+    name: "Alice",
+    greet() {
+        console.log(this.name);
+    }
+};
+const fn = obj.greet; // now fn is a detached function, so this is undefined in strict mode (or window/global in non-strict mode)
+fn();
+
+//to preseve the context
+const fn = obj.greet.bind(obj) 
+
+
+
+
+eg:
+const obj = {
+    name: "Alice",
+    greet() {
+        const inner = function () {
+            console.log(this.name);
+        };
+
+        inner();
+    }
+};
+obj.greet();
+//here undefined as iner is a normal function and no lexical scoping for this so this is undefined in strict mode (or window/global in non-strict mode)
+
+
+The four major this rules to memorize
+
+Rule 1 — Regular function call
+fn();
+this depends on strict mode/environment.
+Rule 2 — Method call
+obj.fn();
+For a regular function:
+this === obj
+Rule 3 — Explicit binding
+fn.call(obj);
+fn.apply(obj);
+fn.bind(obj);
+For regular functions:
+this === obj
+Rule 4 — Arrow functions
+Arrow functions don't create their own this.
+const fn = () => {
+    console.log(this);
+};
+this comes from the surrounding lexical scope.
+And therefore:
+fn.call(obj);
+fn.apply(obj);
+fn.bind(obj)();
+cannot change it.
+
+
+
+
+//Objets ;
+const user = {
+  name: "Rahul",
+  age: 25,
+  city: "Mumbai"
+};
+console.log(Object.keys(user))// ["name", "age", "city"]
+//simmilaryl object.values(uesr)
+//similary object.entries(user) // [["name", "Rahul"], ["age", 25], ["city", "Mumbai"]]
+
+
+Object.assign() //Copies properties from one or more objects into another object,or modifies the target obj
+
+Objet.freeze() //Prevents adding, removing, or modifying properties of an object. The object becomes immutable.
+//but shallow copy only , so if the object has nested objects , then those can be modified
+
+// const user = {
+//   name: "Rahul",
+//   age: 25,
+ //   address: {
+ //       city: "Mumbai"
+//}
+// };
+// Object.freeze(user);
+// user.age = 30;
+// console.log(user.age); //throws error as top level object is frozen but nested objects can be modified in strict mode
+
+// but user.address.city = "Delhi"; // This works as nested property
+
+
+Object.seal()
+// Object.seal() prevents:
+//     adding properties
+//     deleting properties
+
+
+
+EG: 
+const user = {
+  name: "Rahul"
+};
+console.log(
+  Object.getOwnPropertyDescriptor(user, "name")
+);
+outputs :
+{
+  value: "Rahul",
+  writable: true,
+  enumerable: true,
+  configurable: true
+}
+
+can create own objs with 
+const user = {};
+Object.defineProperty(user, "name", {
+  value: "Rahul",
+  writable: false,
+  enumerable: true,
+  configurable: false
+});
+
+
+//EG : 
+//copy is shallow only, only nested properties are copied by refernce not value 
+const user = {
+  name: "Rahul",
+  address: {
+    city: "Mumbai"
+  }
+};
+const cpy = user 
+console.log(user===cpy)
+cpy.address.city = "Delhi";
+console.log(user) //modifies adderss of original,copied both to Delhi
+console.log(cpy)
+
+
+//deep copy fix : 
+const copy = structuredClone(user);
+
+
+
+practice eg: 
+const key = "score";
+const student = {
+  name: "Rahul",
+  [key]: 95,
+  address: {
+    city: "Mumbai"
+  }
+};
+const {
+  name,
+  address: { city },
+  ...other
+} = student;
+const copy = {
+  ...student,
+  score: 100
+};
+const deepCopy = structuredClone(student);
+deepCopy.address.city = "Delhi";
+
+
+console.log(name);
+console.log(city);
+console.log(other);
+console.log(copy.score);
+console.log(student.score);
+console.log(deepCopy.address.city);
+console.log(student.address.city);
+console.log(copy.address === student.address);
+console.log(deepCopy.address === student.address);
+
+outputs : 
+Rahul
+Mumbai
+{ score: 95 }
+100
+95
+Delhi
+Mumbai
+true
+false
+
+
+
+
+JS primitive types : 
+string
+number
+bigint
+boolean
+undefined
+symbol
+null
+
+
+everything else is object type :
+{}
+[]
+function () {}
+new Date()
+
+
+
+Rule 2:
+[] , {} , "0" , "false" , "null" , "undefined" , "NaN" are all truthy values in JS
+
+
+//remember rules : String → Number
+Number("")        // 0
+Number(" ")       // 0
+Number("10")      // 10
+Number("10.5")    // 10.5
+Number("hello")   // NaN
+
+
+Number(null)      // 0
+Number(undefined) // NaN
+
+
+
+If JavaScript needs a primitive from an object, it performs:
+ToPrimitive
+For arrays, you can develop this simple mental model:
+[]      → ""
+[1]     → "1"
+[1, 2]  → "1,2"
+Because arrays' string representation behaves like:
+[].toString()      // ""
+[1].toString()     // "1"
+[1, 2].toString()  // "1,2"
+
+
+NEXT RULE :
+Same type? 
+5==5 , "hello"=="hello" → compare values directly
+
+null and undefined?
+
+Special rule:
+null == undefined // true
+But
+null === undefined // false
+
+Rule : convert boolean to number
+true → 1 false → 0
+
+Rule  — Object vs primitive?
+If one side is an object and the other is a primitive, convert the object to a primitive.
+eg : [] == false
+first => []->"" , ""==0  , 0==0 (stirng to num conversion)
+
+
+Rule :String vs Number?
+Convert the string to a number.
+"5" == 5
+becomes:
+5 == 5
+
+
+
+EG : []==false
+s1 : [] => ""
+s2 : false => 0
+s3 : "" => 0
+s4 : 0==0 => true
+
+
+
+
+edge cases : 
+Case 1 — NaN
+NaN === NaN
+→ false
+But:
+Object.is(NaN, NaN)
+→ true
+Case 2 — 0 and -0
+0 === -0
+→ true
+But:
+Object.is(0, -0)
+→ false
+So memorize this tiny table
+
+
+next : 
+"5"-2 => string to number conversion
+false - 0 => boolean changes to number
+
+
+Rule 5 — null and undefined
+For numeric conversion:
+null      → 0
+undefined → NaN
+Therefore:
+null + 1
+becomes:
+0 + 1
+while:
+undefined + 1
+becomes:
+NaN + 1
+and stays:
+NaN
+
+
+
+Boolean("false") // true
+Boolean("0")     // true
+Boolean("hello") // true
+Boolean(" ")     // true
+Only the empty string is falsy:
+Boolean("") // false
+
+eg : 
+[] + {}
+ans : 
+[] + {}
+ ↓
+"" + "[object Object]"
+ ↓
+"[object Object]"
+
+
+3. {} + []
+This one is a special trap.
+You might reason:
+{} → "[object Object]"
+[] → ""
+and expect:
+"[object Object]"
+But if you write:
+{} + []
+at the beginning of a JavaScript statement, JavaScript can interpret {} as an empty block, rather than an object literal.
+So you can get:
+{} + []
+// 0
+depending on context/environment
+
+
+for ({} + {}) 
+// output : "[object Object][object Object]"
+
+
+
+
+start notes and learning from here and revise above 
+
+
+//remaining : 
+// iterators , generators 
+//data strucutres 
+//classes 
+//prototype chaining egs more 
 
 
 
@@ -1339,13 +2005,7 @@ EG :
 
 // REMAINING CONCEPTS : 
 // this in:
-// global scope (browser vs node)
-// normal function
-// arrow function
-// object methods
 // class methods
-// call, apply, bind
-
 
 // Prototypes & Prototype Chain
 // What is [[Prototype]]
@@ -1356,34 +2016,28 @@ EG :
 
 
 // Objects deep dive
-// Property descriptors
-// writable, enumerable, configurable
 // Object.freeze, seal, preventExtensions
-// Shallow copy vs deep copy
-// Object.assign
-// spread
-// structuredClone
 // in vs hasOwnProperty
+// Object.hasOwn(obj, key)
+// obj.hasOwnProperty(key)
+// key in obj
 
 
 
 
 
 
-// Promises (Deep)
-// Promise states
-// Promise chaining
-// Error handling
-// Promise.all, race, any, allSettled
+// Promise chaining — DEEP
+// Error propagation through chains
+// return value of .then()
+// returning a Promise from .then()
 // Promise vs callback
 
 
 
 // async / await
-// async always returns a promise
 // error handling with try/catch
 // parallel vs sequential await
-
 
 
 // OOP IN JS (optinal)
