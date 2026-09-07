@@ -1764,6 +1764,81 @@ start notes and learning from here and revise above
 // console.log([1,2,3].includes(2))
 
 
+// some polyfills : 
+const a = [1, 2, 3, 4];
+
+// Array.prototype.myMap = function(cb) {
+//     const res = [];
+//     for (let i = 0; i < this.length; i++) {
+//         res.push(cb(this[i]));
+//     }
+//     return res;
+// };
+// console.log(a.myMap(num => num * 2));
+
+
+Array.prototype.myFilter = function(cb) {
+    const res = [];
+    for (let i = 0; i < this.length; i++) {
+        if(cb(this[i]))res.push(this[i]);
+    }
+    return res;
+};
+// console.log(a.myFilter(num => num != 2));
+
+
+Array.prototype.myforEach = function(cb) {
+    for (let i = 0; i < this.length; i++) {
+        console.log(cb(this[i]))
+    }
+};
+// console.log(a.myforEach(num =>num*2));
+
+
+// console.log((num=>num*2)(1, 0, [1, 2, 3]))
+
+
+Array.prototype.myReduce = function(cb,ini=0) {
+    let init=ini ? ini : 0 
+    for (let i = 0; i < this.length; i++) {
+        init=cb(init,this[i])
+    }
+    return init
+}
+// console.log(a.myReduce((acc,num)=>acc+num,0));
+
+
+Array.prototype.myFind = function(cb) {
+    for (let i = 0; i < this.length; i++) {
+        if(cb(this[i])) return this[i];
+    }
+    return undefined;
+}
+// console.log(a.myFind((num)=>num>2));
+
+
+Array.prototype.myIncludes = function(val) {
+    for (let i = 0; i < this.length; i++) {
+        if(this[i]==val) return true;
+    }
+    return false;
+}
+// console.log(a.myIncludes(2));
+
+//does sthis aray contain atleast one el satisfying condn
+Array.prototype.mySome = function(cb) {
+    for (let i = 0; i < this.length; i++) {
+        if (cb(this[i])) return true;
+    }
+    return false;
+};
+console.log(a.mySome(num=>num===2));
+
+
+
+
+
+
 // Object destructuring
 // const user = { name: "John", age: 25 };
 // const { name, age } = user;

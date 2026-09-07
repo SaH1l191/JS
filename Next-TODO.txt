@@ -1,0 +1,37 @@
+﻿https://chatgpt.com/c/6a93bd69-9f30-83ee-8bd3-3ed627d4ed2e
+
+Practice JS questions interview 
+and remaining concepts of JS 
+
+
+Phase B — TypeScript
+1. Types/inference
+2. Union/intersection
+3. Narrowing
+4. interface/type
+5. Generics
+6. Classes
+7. keyof/typeof
+8. Utility types
+9. Conditional/mapped types
+10. tsconfig/compiler
+
+
+Phase C — Node
+Node runtime
+↓
+modules
+↓
+EventEmitter
+↓
+HTTP
+↓
+async I/O
+↓
+streams/buffers
+↓
+filesystem
+↓
+Express/Fastify-style backend concepts
+
+

@@ -575,6 +575,137 @@ z(); // 100 (not 5 – closure captures reference, not value)
 
 When the function is returned, it preserves the lexical scoping **+ the reference to variables**.
 
+### Example 5 – Closure with Global & Local Variables
+
+```javascript
+var x = 10;
+function outer() {
+    let z = 19;
+    return function () {
+        console.log(x, z);
+    };
+}
+const fn = outer();
+x = 99;
+fn(); // 99 19
+```
+
+#### Why?
+
+- The inner function closes over both `x` (global lexical env) and `z` (outer's local scope).
+- `x` is `var` → attached to global lexical env.
+- `z` is `let` → lives in `outer`'s lexical env.
+- When `x = 99` is executed, the same binding is updated.
+- `fn()` prints `99 19` because closures hold **references**, not copies.
+
+#### Execution Flow
+
+```
+GlobalLexicalEnv:
+{
+  x: <uninitialized>,   // TDZ (because var – but var is hoisted with undefined)
+  outer: function
+  fn: <uninitialized>   // TDZ
+}
+
+// Code executes:
+x = 10;
+const fn = outer();
+```
+
+```
+Call Stack:
+┌────────┐
+│ outer()│
+├────────┤
+│ Global │
+└────────┘
+```
+
+```
+outer() returns:
+- innerFunction is created
+- innerFunction.[[Environment]] → GlobalLexicalEnv
+- Why global? Because x is not in outer's scope – found lexically in global scope
+- z lives in outer's lexical env, so innerFunction also captures z
+```
+
+```
+GlobalLexicalEnv after outer() returns:
+{
+  x: 10,
+  outer: function,
+  fn: innerFunction
+}
+innerFunction.[[Environment]] → GlobalLexicalEnv
+```
+
+```
+x = 99 → updates the same binding in GlobalLexicalEnv
+fn() → prints 99 19
+```
+
+> **Key takeaway:** The closure references the **same binding**, not a copy. When `x` changes later, the closure sees the updated value. `z` remains `19` because it was never reassigned.
+
+---
+
+## Practical Closure Examples
+
+### Example 6 – Counter
+
+```javascript
+function createCounter() {
+    let c = 0;
+    return function () {
+        c++;
+        return c;
+    };
+}
+const c1 = createCounter();
+c1(); // 1
+c1(); // 2
+```
+
+The inner function remembers the reference to `c`. Each call increments the same `c`.
+
+### Example 7 – Bank Account
+
+```javascript
+function bankAccount(initialBalance) {
+    let balance = initialBalance;
+    return {
+        deposit(amt) {
+            return (balance += amt);
+        },
+        getBalance() {
+            return balance;
+        },
+    };
+}
+const acc = bankAccount(500);
+acc.getBalance(); // 500
+acc.deposit(100);
+acc.getBalance(); // 600
+```
+
+`balance` is private – only accessible through `deposit` and `getBalance`.
+
+### Example 8 – Function Factory (Power)
+
+```javascript
+function power(exp) {
+    return function (base) {
+        return base ** exp;
+    };
+}
+const sq = power(2);
+sq(5); // 25
+const cube = power(3);
+cube(4); // 64
+```
+
+Each returned function closes over `exp`.
+
 ---
 
 ## SetTimeout + Closures
@@ -1832,4 +1963,104 @@ Boolean("");      // false – only empty string is falsy
 ```javascript
 "5" - 2;    // 3 – string converted to number
 false - 0;  // 0 – boolean converted to number
+```
+
+---
+
+## Array Method Polyfills
+
+A **polyfill** is a piece of JavaScript code (usually a function) that adds functionality that the environment doesn't support natively. Here are polyfills for common Array methods:
+
+### `Array.prototype.myMap`
+
+```javascript
+Array.prototype.myMap = function(cb) {
+    const res = [];
+    for (let i = 0; i < this.length; i++) {
+        res.push(cb(this[i]));
+    }
+    return res;
+};
+```
+
+### `Array.prototype.myFilter`
+
+```javascript
+Array.prototype.myFilter = function(cb) {
+    const res = [];
+    for (let i = 0; i < this.length; i++) {
+        if (cb(this[i])) res.push(this[i]);
+    }
+    return res;
+};
+```
+
+### `Array.prototype.myForEach`
+
+```javascript
+Array.prototype.myforEach = function(cb) {
+    for (let i = 0; i < this.length; i++) {
+        console.log(cb(this[i]));
+    }
+};
+```
+
+### `Array.prototype.myReduce`
+
+```javascript
+Array.prototype.myReduce = function(cb, ini = 0) {
+    let init = ini ? ini : 0;
+    for (let i = 0; i < this.length; i++) {
+        init = cb(init, this[i]);
+    }
+    return init;
+};
+```
+
+### `Array.prototype.myFind`
+
+```javascript
+Array.prototype.myFind = function(cb) {
+    for (let i = 0; i < this.length; i++) {
+        if (cb(this[i])) return this[i];
+    }
+    return undefined;
+};
+```
+
+### `Array.prototype.myIncludes`
+
+```javascript
+Array.prototype.myIncludes = function(val) {
+    for (let i = 0; i < this.length; i++) {
+        if (this[i] == val) return true;
+    }
+    return false;
+};
+```
+
+### `Array.prototype.mySome`
+
+Checks if at least one element satisfies the condition.
+
+```javascript
+Array.prototype.mySome = function(cb) {
+    for (let i = 0; i < this.length; i++) {
+        if (cb(this[i])) return true;
+    }
+    return false;
+};
+```
+
+### `Array.prototype.myEvery`
+
+Checks if all elements satisfy the condition.
+
+```javascript
+Array.prototype.myEvery = function(cb) {
+    for (let i = 0; i < this.length; i++) {
+        if (!cb(this[i])) return false;
+    }
+    return true;
+};
 ```
